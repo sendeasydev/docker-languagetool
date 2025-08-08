@@ -27,6 +27,9 @@ services:
     container_name: languagetool
     restart: unless-stopped
     # read_only: true
+    ports:
+      # Using default port from the image
+      - 8081:8081
     tmpfs:
       - /tmp:exec
     cap_drop:
@@ -40,16 +43,10 @@ services:
       - no-new-privileges
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=app_network"
       - "traefik.http.routers.languagetool.rule=Host(`spl.sendeasy.app`)"
       - "traefik.http.routers.languagetool.entrypoints=websecure"
       - "traefik.http.routers.languagetool.tls.certresolver=myresolver"
       - "traefik.http.services.languagetool.loadbalancer.server.port=8081"
-      - "traefik.http.routers.languagetool-http.rule=Host(`spl.sendeasy.app`)"
-      - "traefik.http.routers.languagetool-http.entrypoints=web"
-      - "traefik.http.routers.languagetool-http.middlewares=languagetool-https-redirect"
-      - "traefik.http.middlewares.languagetool-https-redirect.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.languagetool-https-redirect.redirectscheme.permanent=true"
     networks:
       - app_network
     environment:
